@@ -1,0 +1,24 @@
+# 展示 PV 与 UV 统计
+footer:
+  statistics:
+    enable: true
+    source: "busuanzi"  # 可选 leancloud | busuanzi  根据自己需求选择
+    pv_format: "总访问量 {} 次"  # 显示的文本，{}是数字的占位符（必须包含)，下同
+    uv_format: "总访客数 {} 人"
+
+# 暗色模式
+dark_mode:
+  enable: true
+  default: auto
+
+# Slogan(打字机)
+index:
+  slogan:
+    enable: true
+    text: 🌊看过大海的人不会忘记海的广阔🌊
+    api:
+      enable: true
+      url: "https://v1.hitokoto.cn/"
+      method: "GET"
+      headers: {}
+      keys: ["hitokoto"]
