@@ -18,7 +18,7 @@ index:
     text: 🌊看过大海的人不会忘记海的广阔🌊
     api:
       enable: true
-      url: "https://v1.hitokoto.cn/"
+      url: "https://v1.hitokoto.cn/?c=a&c=c&c=d&c=i&c=k&c=l"
       method: "GET"
       headers: {}
       keys: ["hitokoto"]
