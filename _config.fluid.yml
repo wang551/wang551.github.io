@@ -1,3 +1,7 @@
+# 博客标题
+navbar:
+  blog_title: ""
+
 # 展示 PV 与 UV 统计
 footer:
   statistics:
