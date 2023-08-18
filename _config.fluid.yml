@@ -2,6 +2,32 @@
 navbar:
   blog_title: ""
 
+  # 导航栏菜单，可自行增减，key 用来关联 languages/*.yml，如不存在关联则显示 key 本身的值；icon 是 css class，可以省略；增加 name 可以强制显示指定名称
+  # Navigation bar menu. `key` is used to associate languages/*.yml. If there is no association, the value of `key` itself will be displayed; if `icon` is a css class, it can be omitted; adding `name` can force the display of the specified name
+  menu:
+    - { key: "links", link: "/links/", icon: "iconfont icon-link-fill" }
+
+#---------------------------
+# 友链页
+# Links Page
+#---------------------------
+links:
+  enable: true
+  banner_img: /img/default.png
+  banner_img_height: 60
+  banner_mask_alpha: 0.3
+  # 友链的成员项
+  # Member item of page
+  items:
+    - {
+      title: "张作俊's 窝点",
+      intro: "longlong's 窝",
+      link: "https://zhangzuojun1127.github.io/",
+      # avatar: "/img/favicon.png",
+      avatar: "/medias/logo.png"
+    }
+  default_avatar: /img/avatar.png
+
 # 展示 PV 与 UV 统计
 footer:
   statistics:
