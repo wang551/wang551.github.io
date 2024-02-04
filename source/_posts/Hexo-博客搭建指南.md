@@ -46,4 +46,5 @@ Hexo 在合并主题配置时，Hexo 配置文件中的 theme_config 的优先�
 
 关于 Fluid 的配置这里就不多赘述了，[官网](https://hexo.fluid-dev.com/docs/)有详细的帮助文档。  
 
-希望这篇文章会对你有所帮助
+# 部署到 GitHub Pages
+现在的网站只是在你的电脑上，要想让别人访问你的网站，你可以托管到 GitHub Pages，
