@@ -4,24 +4,11 @@
   
   
   <entry>
-    <title>Hello World!</title>
-    <link href="/2024/02/03/hello-world/"/>
-    <url>/2024/02/03/hello-world/</url>
-    
-    <content type="html"><![CDATA[<h1 id="Hello-World！"><a href="#Hello-World！" class="headerlink" title="Hello World！"></a>Hello World！</h1><p>我的博客已经搭建完成，欢迎大家光临，我会在这里分享一些乱七八糟的东西，希望对你有所帮助。</p>]]></content>
-    
-    
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>Hexo 博客搭建指南</title>
     <link href="/2023/09/09/Hexo-%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/"/>
     <url>/2023/09/09/Hexo-%E5%8D%9A%E5%AE%A2%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/</url>
     
-    <content type="html"><![CDATA[<p>使用 Hexo 快速搭建个人博客，并使用炫酷的主题。</p><span id="more"></span><h1 id="1-安装并配置-Hexo"><a href="#1-安装并配置-Hexo" class="headerlink" title="1 安装并配置 Hexo"></a>1 安装并配置 Hexo</h1><h2 id="1-1-前提"><a href="#1-1-前提" class="headerlink" title="1.1 前提"></a>1.1 前提</h2><p>你需要安装 Node.js、Git，详情见 Hexo 官方文档：<a href="https://hexo.io/zh-cn/docs/#%E5%AE%89%E8%A3%85%E5%89%8D%E6%8F%90">安装前提</a>  </p><h2 id="1-2-安装-Hexo"><a href="#1-2-安装-Hexo" class="headerlink" title="1.2 安装 Hexo"></a>1.2 安装 Hexo</h2><p>安装完成后，就可以安装 Hexo 了：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install -g hexo-cli<br></code></pre></td></tr></table></figure><p>然后就安装完成了。</p><h2 id="1-3-配置-Hexo"><a href="#1-3-配置-Hexo" class="headerlink" title="1.3 配置 Hexo"></a>1.3 配置 Hexo</h2><p>要把 Hexo 调教成你的样子，修改配置文件是必不可少的，Hexo 的配置在博客目录下的 <code>_config.yml</code> 文件内，你可以通过修改此文件来配置 Hexo 。  </p><p>这里就不详细说了，具体请看<a href="https://hexo.io/zh-cn/docs/configuration">官方配置文档</a>。</p><h1 id="2-更换主题"><a href="#2-更换主题" class="headerlink" title="2 更换主题"></a>2 更换主题</h1><h2 id="2-1-安装-Fluid"><a href="#2-1-安装-Fluid" class="headerlink" title="2.1 安装 Fluid"></a>2.1 安装 Fluid</h2><p>在博客目录执行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install --save hexo-theme-fluid<br></code></pre></td></tr></table></figure><p>然后修改 Hexo 配置文件，指定主题为 Fluid。</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># ./_config.yml</span><br><span class="hljs-attr">theme:</span> <span class="hljs-string">fluid</span>  <span class="hljs-comment"># 指定主题</span><br><br><span class="hljs-attr">language:</span> <span class="hljs-string">zh-CN</span>  <span class="hljs-comment"># 指定语言，会影响主题显示的语言，按需修改</span><br></code></pre></td></tr></table></figure><h2 id="2-2-配置-Fluid"><a href="#2-2-配置-Fluid" class="headerlink" title="2.2 配置 Fluid"></a>2.2 配置 Fluid</h2><p>这里要先说一下配置文件的优先级<br>官网这样解释：  </p><blockquote><p>Hexo 在合并主题配置时，Hexo 配置文件中的 theme_config 的优先级最高，其次是 _config.[theme].yml 文件，最后是位于主题目录下的 _config.yml 文件</p><footer><strong>https://hexo.io/zh-cn/docs/configuration 配置</strong></footer></blockquote>  <p>也就是说，你在修改主题配置的时候，只需要把主题文件夹相应部分复制到<code>/_config.fluid.yml</code>内然后修改就可以覆盖默认配置了。  </p><p>关于 Fluid 的配置这里就不多赘述了，<a href="https://hexo.fluid-dev.com/docs/">官网</a>有详细的帮助文档。  </p><p>希望这篇文章会对你有所帮助</p>]]></content>
+    <content type="html"><![CDATA[<p>使用 Hexo 快速搭建个人博客，并使用炫酷的主题。</p><span id="more"></span><h1 id="1-安装并配置-Hexo"><a href="#1-安装并配置-Hexo" class="headerlink" title="1 安装并配置 Hexo"></a>1 安装并配置 Hexo</h1><h2 id="1-1-前提"><a href="#1-1-前提" class="headerlink" title="1.1 前提"></a>1.1 前提</h2><p>你需要安装 Node.js、Git，详情见 Hexo 官方文档：<a href="https://hexo.io/zh-cn/docs/#%E5%AE%89%E8%A3%85%E5%89%8D%E6%8F%90">安装前提</a>  </p><h2 id="1-2-安装-Hexo"><a href="#1-2-安装-Hexo" class="headerlink" title="1.2 安装 Hexo"></a>1.2 安装 Hexo</h2><p>安装完成后，就可以安装 Hexo 了：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install -g hexo-cli<br></code></pre></td></tr></table></figure><p>然后就安装完成了。</p><h2 id="1-3-配置-Hexo"><a href="#1-3-配置-Hexo" class="headerlink" title="1.3 配置 Hexo"></a>1.3 配置 Hexo</h2><p>要把 Hexo 调教成你的样子，修改配置文件是必不可少的，Hexo 的配置在博客目录下的 <code>_config.yml</code> 文件内，你可以通过修改此文件来配置 Hexo 。  </p><p>这里就不详细说了，具体请看<a href="https://hexo.io/zh-cn/docs/configuration">官方配置文档</a>。</p><h1 id="2-更换主题"><a href="#2-更换主题" class="headerlink" title="2 更换主题"></a>2 更换主题</h1><h2 id="2-1-安装-Fluid"><a href="#2-1-安装-Fluid" class="headerlink" title="2.1 安装 Fluid"></a>2.1 安装 Fluid</h2><p>在博客目录执行</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install --save hexo-theme-fluid<br></code></pre></td></tr></table></figure><p>然后修改 Hexo 配置文件，指定主题为 Fluid。</p><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-comment"># ./_config.yml</span><br><span class="hljs-attr">theme:</span> <span class="hljs-string">fluid</span>  <span class="hljs-comment"># 指定主题</span><br><br><span class="hljs-attr">language:</span> <span class="hljs-string">zh-CN</span>  <span class="hljs-comment"># 指定语言，会影响主题显示的语言，按需修改</span><br></code></pre></td></tr></table></figure><h2 id="2-2-配置-Fluid"><a href="#2-2-配置-Fluid" class="headerlink" title="2.2 配置 Fluid"></a>2.2 配置 Fluid</h2><p>这里要先说一下配置文件的优先级<br>官网这样解释：  </p><blockquote><p>Hexo 在合并主题配置时，Hexo 配置文件中的 theme_config 的优先级最高，其次是 _config.[theme].yml 文件，最后是位于主题目录下的 _config.yml 文件</p><footer><strong>https://hexo.io/zh-cn/docs/configuration 配置</strong></footer></blockquote>  <p>也就是说，你在修改主题配置的时候，只需要把主题文件夹相应部分复制到<code>/_config.fluid.yml</code>内然后修改就可以覆盖默认配置了。  </p><p>关于 Fluid 的配置这里就不多赘述了，<a href="https://hexo.fluid-dev.com/docs/">官网</a>有详细的帮助文档。  </p><h1 id="部署到-GitHub-Pages"><a href="#部署到-GitHub-Pages" class="headerlink" title="部署到 GitHub Pages"></a>部署到 GitHub Pages</h1><p>现在的网站只是在你的电脑上，要想让别人访问你的网站，你可以托管到 GitHub Pages，</p>]]></content>
     
     
     
@@ -30,6 +17,19 @@
       <tag>教程</tag>
       
     </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Hello World!</title>
+    <link href="/2023/08/12/hello-world/"/>
+    <url>/2023/08/12/hello-world/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Hello-World！"><a href="#Hello-World！" class="headerlink" title="Hello World！"></a>Hello World！</h1><p>我的博客已经搭建完成，欢迎大家光临，我会在这里分享一些乱七八糟的东西，希望对你有所帮助。</p>]]></content>
+    
+    
     
   </entry>
   
