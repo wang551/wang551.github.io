@@ -1,6 +1,10 @@
 ---
 title: 安装适用于 Linux 的 Windows 子系统 (WSL)
-tags: WSL Windows Linux 子系统
+tags: 
+    - WSL
+    - Windows
+    - Linux
+    - 子系统
 date: 2025-01-02 15:27:41
 ---
 
