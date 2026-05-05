@@ -1,6 +1,9 @@
 ---
 title: Hexo 博客搭建指南
-tags: 教程
+tags: 
+    - 教程 
+    - Blog 
+    - Hexo
 date: 2023-09-09 19:46:18
 ---
 
