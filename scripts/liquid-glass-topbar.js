@@ -2,18 +2,22 @@
  * Liquid Glass Effect for Topbar
  * Advanced version with SVG filters for chromatic aberration and refraction
  * Based on liquid-glass-react, adapted for vanilla JS/Hexo
+ *
+ * 配置统一放在下方 config；useSVGFilter 为 true 时才会把 SVG 色散滤镜注入页面。
  */
 
-hexo.extend.injector.register('body_end', `
-<style>
-  /* ========== Liquid Glass for Navbar Container ========== */
-  .lg-navbar-wrapper {
-    position: relative;
-  }
+const config = {
+  elasticity: 0.06,              // 弹性跟随强度，越小越含蓄
+  activationZone: 100,           // 鼠标激活范围（px）
+  useSVGFilter: false,           // true 时启用 SVG 色散滤镜
+  navbarSelector: 'nav.navbar'   // Fluid 主题的导航栏元素
+};
 
-  /* Apply liquid glass effect to navbar itself */
+const style = `
+<style>
+  /* ========== Liquid Glass for Navbar ========== */
+  /* Don't override position - keep navbar's original fixed positioning */
   .lg-navbar-glass {
-    /* Don't override position - keep navbar's original sticky/fixed positioning */
     backdrop-filter: blur(20px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
     background: rgba(255, 255, 255, 0.05) !important;
@@ -22,25 +26,31 @@ hexo.extend.injector.register('body_end', `
     margin: 12px auto !important;
     max-width: calc(100% - 24px) !important;
 
-    /* Rounded corners - expanded state */
     border-radius: 16px !important;
 
-    /* Enhanced shadow for floating effect */
     box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.12),
       0 2px 16px rgba(0, 0, 0, 0.08),
       inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 
     border: 1px solid rgba(255, 255, 255, 0.15) !important;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+
+    /* 只过渡实际会变的属性，避免 transition: all 的开销 */
+    transition:
+      margin 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      background 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+      padding 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
   }
 
   /* Scrolled state - capsule style */
   .lg-navbar-glass.lg-scrolled {
     margin: 8px auto !important;
     max-width: calc(100% - 16px) !important;
-    /* Super long capsule: only left/right corners are rounded */
-    border-radius: 50px !important;
+    /* 超过高度一半的圆角会被浏览器按比例压缩，天然形成完美胶囊，无需 JS 计算 */
+    border-radius: 999px !important;
     box-shadow:
       0 4px 24px rgba(0, 0, 0, 0.15),
       0 1px 12px rgba(0, 0, 0, 0.10),
@@ -59,7 +69,7 @@ hexo.extend.injector.register('body_end', `
     );
     border-radius: inherit;
     opacity: 0;
-    transition: opacity 0.3s ease, border-radius 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: opacity 0.3s ease;
     mix-blend-mode: screen;
   }
 
@@ -76,9 +86,7 @@ hexo.extend.injector.register('body_end', `
   }
 
   /* For navbar items, maintain flex behavior */
-  .navbar-nav .lg-container,
-  .navbar-nav > .lg-container {
-    display: inline-flex;
+  .navbar-nav .lg-container {
     margin: 0 6px;
   }
 
@@ -93,24 +101,18 @@ hexo.extend.injector.register('body_end', `
       0 8px 32px rgba(0, 0, 0, 0.12),
       inset 0 1px 0 rgba(255, 255, 255, 0.2);
     overflow: hidden;
-    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    /* transform 用短过渡做弹性跟随，背景/阴影用 0.25s 淡入淡出 */
+    transition:
+      transform 0.12s cubic-bezier(0.4, 0, 0.2, 1),
+      background 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
   }
 
-  /* More specific rule for navbar links - golden ratio padding */
-  nav .lg-glass,
-  .navbar .lg-glass {
-    --lg-radius: 10px !important;
-    padding: 5px 8px !important;
-    --lg-blur: 12px !important;
-    --lg-saturate: 140% !important;
-  }
-
-  /* Special styles for navbar buttons */
+  /* 导航栏内按钮：圆角、内边距等统一由 CSS 变量控制（不再写内联样式） */
   .lg-navbar-glass .lg-glass {
-    --lg-radius: 10px;
-    /* Golden ratio: horizontal padding / vertical padding ≈ 1.618 */
-    /* 8px / 5px = 1.6 (close to golden ratio φ = 1.618) */
+    --lg-radius: 20px; /* 胶囊样式圆角 */
+    /* 水平/垂直内边距比 ≈ 1.6，接近黄金比例 */
     --lg-padding: 5px 8px;
     --lg-blur: 12px;
     --lg-saturate: 140%;
@@ -120,19 +122,20 @@ hexo.extend.injector.register('body_end', `
       inset 0 1px 0 rgba(255, 255, 255, 0.25);
   }
 
-  .lg-navbar-glass .lg-glass:hover {
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow:
-      0 4px 20px rgba(0, 0, 0, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.35);
-    transform: translateY(-1px);
-  }
-
-  .lg-glass:hover {
+  .lg-glass:hover,
+  .lg-glass:focus-within {
     background: rgba(255, 255, 255, 0.12);
     box-shadow:
       0 12px 48px rgba(0, 0, 0, 0.18),
       inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  }
+
+  .lg-navbar-glass .lg-glass:hover,
+  .lg-navbar-glass .lg-glass:focus-within {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow:
+      0 4px 20px rgba(0, 0, 0, 0.12),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
   }
 
   /* SVG filter application */
@@ -202,7 +205,8 @@ hexo.extend.injector.register('body_end', `
     );
   }
 
-  .lg-glass:hover .lg-shine {
+  .lg-glass:hover .lg-shine,
+  .lg-glass:focus-within .lg-shine {
     opacity: 1;
   }
 
@@ -215,29 +219,11 @@ hexo.extend.injector.register('body_end', `
     display: inline;
   }
 
-  /* Ensure navbar links display correctly */
-  .lg-navbar-glass .lg-content {
-    display: inline;
-  }
-
-  /* Ensure wrapped elements maintain their styles */
-  .lg-content a,
-  .lg-content .nav-link {
-    display: inline;
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-
   /* Reset all spacing for elements inside glass */
   .lg-glass .nav-link,
   .lg-glass a {
     padding: 0 !important;
     margin: 0 !important;
-  }
-
-  /* Elastic transform class */
-  .lg-elastic {
-    transition: transform 0.12s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   /* Hide original SVG */
@@ -247,15 +233,34 @@ hexo.extend.injector.register('body_end', `
     height: 0;
     pointer-events: none;
   }
-</style>
 
+  /* 触屏设备没有鼠标跟随效果，降低模糊与混合开销 */
+  @media (hover: none) {
+    .lg-navbar-glass {
+      backdrop-filter: blur(12px) saturate(140%) !important;
+      -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+    }
+  }
+
+  /* 用户偏好减少动态效果时关闭过渡动画 */
+  @media (prefers-reduced-motion: reduce) {
+    .lg-navbar-glass,
+    .lg-glass,
+    .lg-shine,
+    .lg-navbar-shine {
+      transition: none !important;
+    }
+  }
+</style>`;
+
+const svgDefs = config.useSVGFilter ? `
 <!-- SVG Filter Definition -->
 <svg class="lg-svg-defs" aria-hidden="true">
   <defs>
     <filter id="lg-filter" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
       <!-- Create displacement map -->
       <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise" seed="0"/>
-      <feColorMatrix in="noise" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" in2="noise" result="coloredNoise"/>
+      <feColorMatrix in="noise" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0" result="coloredNoise"/>
 
       <!-- Red channel displacement -->
       <feDisplacementMap in="SourceGraphic" in2="coloredNoise" scale="3" xChannelSelector="R" yChannelSelector="G" result="red-displaced"/>
@@ -276,25 +281,28 @@ hexo.extend.injector.register('body_end', `
       <!-- Apply slight blur -->
       <feGaussianBlur in="rgb-blend" stdDeviation="0.3" result="blended"/>
 
-      <!-- Create edge mask -->
-      <feColorMatrix in="coloredNoise" type="luminanceToAlpha" result="edge-mask"/>
-      <feComponentTransfer in="edge-mask" result="edge-mask-adjusted">
+      <!-- 用噪点亮度生成遮罩，让色散只在局部显露 -->
+      <feColorMatrix in="coloredNoise" type="luminanceToAlpha" result="mask"/>
+      <feComponentTransfer in="mask" result="mask-adjusted">
         <feFuncA type="linear" slope="3" intercept="-0.5"/>
       </feComponentTransfer>
 
-      <!-- Blend original with chromatic aberration at edges -->
-      <feComposite in="blended" in2="edge-mask-adjusted" operator="in" result="edge-aberration"/>
-      <feComposite in="SourceGraphic" in2="edge-aberration" operator="over" result="final"/>
+      <!-- Blend original with chromatic aberration at masked areas -->
+      <feComposite in="blended" in2="mask-adjusted" operator="in" result="aberration"/>
+      <feComposite in="SourceGraphic" in2="aberration" operator="over"/>
     </filter>
   </defs>
-</svg>
+</svg>` : '';
 
+const script = `
 <script>
 (function() {
   'use strict';
 
   if (window.liquidGlassTopbarInit) return;
   window.liquidGlassTopbarInit = true;
+
+  const CONFIG = ${JSON.stringify(config)};
 
   class LiquidGlassTopbar {
     constructor(options = {}) {
@@ -310,6 +318,10 @@ hexo.extend.injector.register('body_end', `
       this.navbarElement = null;
       this.mouseX = 0;
       this.mouseY = 0;
+      this.rafPending = false;
+      // 纯装饰效果：触屏设备或用户偏好减少动态时，跳过鼠标跟随逻辑
+      this.trackPointer = window.matchMedia('(hover: hover)').matches &&
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       this.init();
     }
@@ -318,7 +330,6 @@ hexo.extend.injector.register('body_end', `
       this.applyToNavbar();
       this.applyToElements();
       this.setupEventListeners();
-      this.observeChanges();
     }
 
     applyToNavbar() {
@@ -328,11 +339,8 @@ hexo.extend.injector.register('body_end', `
       if (!navbar || navbar.hasAttribute('data-lg-navbar-processed')) return;
 
       navbar.setAttribute('data-lg-navbar-processed', 'true');
-
-      // Apply glass effect directly to navbar
       navbar.classList.add('lg-navbar-glass');
 
-      // Create shine layer
       const shine = document.createElement('div');
       shine.className = 'lg-navbar-shine';
       navbar.appendChild(shine);
@@ -341,20 +349,14 @@ hexo.extend.injector.register('body_end', `
     }
 
     applyToElements() {
-      // Target navbar elements - only wrap the links, not list items or brand
+      // Fluid 的导航项（含 dropdown-toggle，它同样带 .nav-link）都在 nav.navbar 内
       const selectors = this.config.targetSelector
         ? [this.config.targetSelector]
-        : [
-            'nav.navbar .nav-link',
-            'nav .dropdown-toggle',
-            '.navbar-nav .nav-link'
-          ];
+        : ['nav.navbar .nav-link'];
 
       selectors.forEach(selector => {
         try {
-          const elements = document.querySelectorAll(selector);
-          elements.forEach(el => {
-            // Apply to all nav links, even inside glass navbar
+          document.querySelectorAll(selector).forEach(el => {
             this.wrapElement(el);
           });
         } catch (e) {
@@ -377,145 +379,87 @@ hexo.extend.injector.register('body_end', `
 
       element.setAttribute('data-lg-wrapped', 'true');
 
-      // Create container
       const container = document.createElement('div');
       container.className = 'lg-container';
 
-      // Create glass
       const glass = document.createElement('div');
-      glass.className = 'lg-glass lg-elastic';
+      glass.className = 'lg-glass';
       if (this.config.useSVGFilter) {
         glass.classList.add('with-filter');
       }
 
-      // Apply golden ratio padding directly via inline style
-      glass.style.padding = '5px 8px';
-      glass.style.borderRadius = '20px'; // 胶囊样式圆角
-
-      // Create border
       const border = document.createElement('div');
       border.className = 'lg-border';
       glass.appendChild(border);
 
-      // Create shine
       const shine = document.createElement('div');
       shine.className = 'lg-shine';
       glass.appendChild(shine);
 
-      // Create content wrapper
       const content = document.createElement('span');
       content.className = 'lg-content';
 
-      // Insert into DOM
       element.parentNode.insertBefore(container, element);
       glass.appendChild(content);
       content.appendChild(element);
       container.appendChild(glass);
 
-      // Store reference
       this.elements.push({ container, glass, border, shine, element });
     }
 
     setupEventListeners() {
-      document.addEventListener('mousemove', (e) => {
-        this.mouseX = e.clientX;
-        this.mouseY = e.clientY;
+      if (this.trackPointer) {
+        document.addEventListener('mousemove', (e) => {
+          this.mouseX = e.clientX;
+          this.mouseY = e.clientY;
 
-        requestAnimationFrame(() => this.updateEffects());
-      });
-
-      // Handle hover state
-      document.addEventListener('mouseover', (e) => {
-        const glass = e.target.closest('.lg-glass');
-        if (glass) {
-          glass.style.background = 'rgba(255, 255, 255, 0.15)';
-        }
-      });
-
-      document.addEventListener('mouseout', (e) => {
-        const glass = e.target.closest('.lg-glass');
-        if (glass) {
-          glass.style.background = '';
-        }
-      });
+          // 一帧内只调度一次，避免多次 mousemove 排队重复执行
+          if (this.rafPending) return;
+          this.rafPending = true;
+          requestAnimationFrame(() => {
+            this.rafPending = false;
+            this.updateEffects();
+          });
+        });
+      }
 
       // Scroll detection for navbar shape transformation
       window.addEventListener('scroll', () => {
         this.handleScroll();
       }, { passive: true });
 
-      // 监听窗口尺寸变化，重新计算圆角
-      window.addEventListener('resize', () => {
-        this.debounceUpdate();
-      });
-
-      // Initial check
+      // Initial check（页面刷新时可能已经停在滚动位置）
       this.handleScroll();
-    }
-
-    calculateCapsuleRadius() {
-      if (!this.navbarElement) return 0;
-
-      const navbar = this.navbarElement.element;
-      const rect = navbar.getBoundingClientRect();
-
-      // 获取实际高度（包括内容、padding、border）
-      const actualHeight = rect.height;
-
-      // 计算胶囊圆角半径
-      // 对于完美的胶囊：圆角半径 = 高度 / 2
-      const radius = actualHeight / 2;
-
-      return Math.floor(radius); // 取整避免小数
     }
 
     handleScroll() {
       if (!this.navbarElement) return;
 
-      const { element: navbar } = this.navbarElement;
-      const scrollY = window.scrollY || window.pageYOffset;
+      const navbar = this.navbarElement.element;
+      const scrolled = window.scrollY > 50;
 
-      // Add/remove scrolled class based on scroll position
-      if (scrollY > 50) {
-        navbar.classList.add('lg-scrolled');
-
-        // 动态计算并应用圆角
-        const capsuleRadius = this.calculateCapsuleRadius();
-        navbar.style.borderRadius = capsuleRadius + 'px';
-      } else {
-        navbar.classList.remove('lg-scrolled');
-        // 展开状态显式设置圆角
-        navbar.style.borderRadius = '16px';
-      }
-    }
-
-    debounceUpdate() {
-      clearTimeout(this.resizeTimer);
-      this.resizeTimer = setTimeout(() => {
-        // 重新计算圆角
-        if (this.navbarElement) {
-          const navbar = this.navbarElement.element;
-          if (navbar.classList.contains('lg-scrolled')) {
-            const capsuleRadius = this.calculateCapsuleRadius();
-            navbar.style.borderRadius = capsuleRadius + 'px';
-          }
-        }
-      }, 250);
+      // 形态没变化时不做任何 DOM 写入；胶囊圆角由 CSS（999px 自动钳制）完成
+      if (scrolled === navbar.classList.contains('lg-scrolled')) return;
+      navbar.classList.toggle('lg-scrolled', scrolled);
     }
 
     updateEffects() {
-      // Update navbar shine
-      if (this.navbarElement) {
-        const { element: navbar, shine } = this.navbarElement;
-        const rect = navbar.getBoundingClientRect();
-        const shineX = ((this.mouseX - rect.left) / rect.width) * 100;
+      if (!this.trackPointer) return;
 
-        shine.style.setProperty('--lg-shine-x', shineX + '%');
+      // 先批量读完所有位置，再统一写入，避免读写交错反复触发重排
+      const navbarEntry = this.navbarElement;
+      const navbarRect = navbarEntry ? navbarEntry.element.getBoundingClientRect() : null;
+      const rects = this.elements.map(({ glass }) => glass.getBoundingClientRect());
+
+      // Update navbar shine
+      if (navbarEntry) {
+        const shineX = ((this.mouseX - navbarRect.left) / navbarRect.width) * 100;
+        navbarEntry.shine.style.setProperty('--lg-shine-x', shineX + '%');
       }
 
       // Update individual element effects
-      this.elements.forEach(({ glass, border, shine }) => {
-        const rect = glass.getBoundingClientRect();
+      this.elements.forEach(({ glass, border, shine }, index) => {
+        const rect = rects[index];
 
         // Mouse relative position
         const relX = ((this.mouseX - rect.left) / rect.width) * 100;
@@ -558,25 +502,9 @@ hexo.extend.injector.register('body_end', `
           const pos = 50 + deltaY * 0.2;
           border.style.setProperty('--lg-border-angle', angle + 'deg');
           border.style.setProperty('--lg-border-pos', Math.max(0, Math.min(100, pos)) + '%');
-        } else {
+        } else if (glass.style.transform) {
           glass.style.transform = '';
         }
-      });
-    }
-
-    observeChanges() {
-      const observer = new MutationObserver((mutations) => {
-        // Debounce
-        clearTimeout(this.observeTimer);
-        this.observeTimer = setTimeout(() => {
-          this.applyToNavbar();
-          this.applyToElements();
-        }, 250);
-      });
-
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true
       });
     }
   }
@@ -584,27 +512,20 @@ hexo.extend.injector.register('body_end', `
   // Initialize
   function initLiquidGlass() {
     if (window.liquidGlassTopbar) return;
-
-    window.liquidGlassTopbar = new LiquidGlassTopbar({
-      elasticity: 0.06,          // Reduced for more subtle movement
-      activationZone: 100,        // Reduced activation range
-      useSVGFilter: false,        // Set to true for chromatic aberration effect
-      navbarSelector: 'nav.navbar' // Selector for navbar element
-    });
-
-    console.log('Liquid Glass Topbar initialized');
+    window.liquidGlassTopbar = new LiquidGlassTopbar(CONFIG);
   }
 
-  // Wait for DOM
+  // Wait for DOM（脚本注入在 body 末尾，导航栏此时必然已解析完成）
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initLiquidGlass);
   } else {
     initLiquidGlass();
   }
 
-  // Fallback for dynamic content
-  setTimeout(initLiquidGlass, 1500);
-
 })();
-<\/script>
-`, 'default');
+<\/script>`;
+
+// 样式放 head：导航栏在页面顶部，避免解析到 body 末尾前先闪一下无玻璃样式的状态；
+// 脚本与（可选的）SVG 滤镜放 body 末尾执行。
+hexo.extend.injector.register('head_begin', style, 'default');
+hexo.extend.injector.register('body_end', svgDefs + script, 'default');
